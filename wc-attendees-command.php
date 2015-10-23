@@ -59,10 +59,26 @@ class WC_Attendees_Command extends WP_CLI_Command {
 			}
 			if ( ! empty( $data->entry[0]->accounts ) ) {
 				foreach( $data->entry[0]->accounts as $account ) {
-					$key = 'wordpress' === $account->shortname ? 'website' : $account->shortname;
+					$key = 'wordpress' === $account->shortname ? 'url' : $account->shortname;
 					$attendee[ $key ] = $account->url;
 				}
 			}
+			// See if we can get their description and website from Twitter
+			if ( ! empty( $attendee['twitter'] ) && ( empty( $attendee['description'] ) || empty( $attendee['url'] ) || empty( $attendee['location'] ) ) ) {
+				$response = Utils\http_request( 'GET', $attendee['twitter'] );
+				if ( 200 === $response->status_code ) {
+					$dom = new DOMDocument;
+					@$dom->loadHtml( $response->body ); // suppress html5 errors
+					$json_raw = $dom->getElementById( 'init-data' )->getAttribute( 'value' );
+					$json = json_decode( html_entity_decode( $json_raw ) );
+					foreach( array( 'description', 'location', 'url' ) as $key ) {
+						if ( empty( $attendee[ $key ] ) && ! empty( $json->profile_user->$key ) ) {
+							$attendee[ $key ] = $json->profile_user->$key;
+						}
+					}
+				}
+			}
+
 			foreach( $attendee as $key => $value ) {
 				if ( ! in_array( $key, $fields ) ) {
 					$fields[] = $key;
