@@ -58,7 +58,8 @@ class WC_Attendees_Command extends WP_CLI_Command {
 			}
 			if ( ! empty( $data->entry[0]->accounts ) ) {
 				foreach( $data->entry[0]->accounts as $account ) {
-					$attendee[ $account->shortname ] = $account->url;
+					$key = 'wordpress' === $account->shortname ? 'website' : $account->shortname;
+					$attendee[ $key ] = $account->url;
 				}
 			}
 			foreach( $attendee as $key => $value ) {
