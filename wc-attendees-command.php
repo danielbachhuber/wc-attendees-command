@@ -47,6 +47,7 @@ class WC_Attendees_Command extends WP_CLI_Command {
 			$attendee = array(
 				'display_name'       => $data->entry[0]->displayName,
 				'description'        => isset( $data->entry[0]->aboutMe ) ? $data->entry[0]->aboutMe : '',
+				'location'           => isset( $data->entry[0]->currentLocation ) ? $data->entry[0]->currentLocation : '',
 				);
 			if ( ! empty( $data->entry[0]->emails ) ) {
 				foreach( $data->entry[0]->emails as $email ) {
