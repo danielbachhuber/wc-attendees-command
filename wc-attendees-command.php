@@ -45,6 +45,7 @@ class WC_Attendees_Command extends WP_CLI_Command {
 			}
 			$data = json_decode( $response->body );
 			$attendee = array(
+				'username'           => isset( $data->entry[0]->preferredUsername ) ? $data->entry[0]->preferredUsername : '',
 				'display_name'       => $data->entry[0]->displayName,
 				'description'        => isset( $data->entry[0]->aboutMe ) ? $data->entry[0]->aboutMe : '',
 				'location'           => isset( $data->entry[0]->currentLocation ) ? $data->entry[0]->currentLocation : '',
